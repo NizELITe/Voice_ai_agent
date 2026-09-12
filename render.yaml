@@ -1,0 +1,20 @@
+# Render blueprint. Deploy with: New -> Blueprint -> point at this repo.
+# DATABASE_URL and VAPI_SERVER_SECRET are marked sync:false so Render prompts
+# for them rather than storing secrets in the repository.
+services:
+  - type: web
+    name: patient-registration-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: DATABASE_URL
+        sync: false
+      - key: VAPI_SERVER_SECRET
+        sync: false
+      - key: ALLOW_UNAUTHENTICATED_TOOLS
+        value: "false"
