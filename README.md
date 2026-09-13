@@ -228,10 +228,16 @@ No secrets are committed; `.env` is gitignored.
 
 ## Known limitations and trade-offs
 
-- **Render's free tier sleeps after 15 minutes idle** and takes ~50s to wake,
-  which would strand a caller mid-conversation. Mitigated with a `/health`
-  pinger; a paid instance or a small VPS removes the problem properly. This was
-  a deliberate cost trade-off, not an oversight.
+- **Render's free tier sleeps after 15 minutes idle**, and this was observed to
+  actually break a call in testing: `lookup_patient` timed out against a cold
+  instance before Render finished waking up, and the agent recovered
+  conversationally but the registration was never saved. Mitigated with
+  [`.github/workflows/keep-warm.yml`](.github/workflows/keep-warm.yml), which
+  pings `/health` every 10 minutes with no third-party account required, plus
+  a 30s tool-call timeout (up from Vapi's ~20s default) as a second line of
+  defence. A paid instance or a small VPS removes the class of problem
+  entirely; this was a deliberate cost trade-off for the assessment window,
+  not an oversight.
 - **`create_all()` instead of migrations.** Appropriate for a fresh schema under
   a time limit; a longer-lived service needs Alembic.
 - **Transcripts are logged, not stored.** `end-of-call-report` events are written
