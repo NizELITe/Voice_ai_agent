@@ -254,6 +254,14 @@ def call_vapi(path: str, payload: dict, api_key: str, method: str = "POST") -> d
         headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
+            # Vapi's API sits behind Cloudflare, which blocks the default
+            # urllib User-Agent outright (Cloudflare error 1010) before the
+            # request ever reaches Vapi. A normal browser-shaped UA passes.
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/124.0.0.0 Safari/537.36"
+            ),
         },
         method=method,
     )
