@@ -6,8 +6,8 @@ confirmation, and persists it. A REST API exposes the stored records.
 
 | | |
 |---|---|
-| **Phone number** | `+1 (XXX) XXX-XXXX` — *fill in after provisioning* |
-| **API base URL** | `https://<your-app>.onrender.com` — *fill in after deploying* |
+| **Phone number** | +1 (979) 559-4419 |
+| **API base URL** | https://voice-ai-agent-8tvr.onrender.com |
 | **Interactive docs** | `<API base URL>/docs` |
 
 ---
