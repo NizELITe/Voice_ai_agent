@@ -1,0 +1,21 @@
+name: Keep Render instance warm
+
+# Render's free tier sleeps after 15 minutes of no incoming requests, and a
+# cold start takes long enough to blow past Vapi's tool-call timeout - the
+# root cause of a real registration call failing silently on
+# lookup_patient. Pinging /health well inside that 15-minute window keeps
+# the instance warm for the assessment window without needing a paid plan
+# or a third-party uptime service.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping /health
+        run: |
+          curl -sf --max-time 25 https://voice-ai-agent-8tvr.onrender.com/health || \
+          echo "Health check failed or the instance was cold-starting - this run's ping still woke it up for the next request."

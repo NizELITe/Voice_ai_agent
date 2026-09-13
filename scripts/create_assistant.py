@@ -91,7 +91,12 @@ def load_system_prompt() -> str:
 
 
 def build_tools(tools_url: str, secret: str) -> list[dict]:
-    server = {"url": tools_url}
+    # Vapi's default per-tool timeout (~20s) is tight enough that a cold
+    # Render free-tier instance can miss it before ever answering. A GitHub
+    # Actions workflow (.github/workflows/keep-warm.yml) pings /health every
+    # 10 minutes to avoid the cold start altogether; this raises the ceiling
+    # as a second line of defence in case a ping is ever missed.
+    server = {"url": tools_url, "timeoutSeconds": 30}
     if secret:
         server["secret"] = secret
 
